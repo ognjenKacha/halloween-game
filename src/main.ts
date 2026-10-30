@@ -95,14 +95,18 @@ const renderer = createRenderer(canvas);
 // Cosmetic features plug in from outside the game loop (architecture 2.2).
 installPuddle({ game, renderer });
 // Each run gets a fresh keyboard, so a key still held from the crash does not
-// count as already pressed in the next run.
-function bindKeyboard(): void {
-  attachKeyboard(window, createKeyboard(), (intent) => {
+// count as already pressed in the next run. The previous handle is disposed
+// before rebinding so window listeners do not pile up across restarts.
+function bindKeyboard(): { dispose(): void } {
+  return attachKeyboard(window, createKeyboard(), (intent) => {
     game.dispatch(intent);
   });
 }
-bindKeyboard();
-game.on('restart', bindKeyboard);
+let keyboardHandle = bindKeyboard();
+game.on('restart', () => {
+  keyboardHandle.dispose();
+  keyboardHandle = bindKeyboard();
+});
 
 // 5. Read-only hook for end-to-end tests. Frozen so page code cannot replace it.
 window.__dino = Object.freeze({
