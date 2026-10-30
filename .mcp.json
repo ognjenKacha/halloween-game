@@ -1,0 +1,16 @@
+{
+  "mcpServers": {
+    "awos-recruitment": {
+      "type": "http",
+      "url": "https://recruitment.awos.provectus.pro/mcp"
+    },
+    "playwright": {
+      "type": "stdio",
+      "command": "npx",
+      "args": [
+        "-y",
+        "@playwright/mcp@latest"
+      ]
+    }
+  }
+}
