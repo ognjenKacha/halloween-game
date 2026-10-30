@@ -27,6 +27,23 @@ export const PALETTE = {
  */
 export const PUDDLE = { width: 60, growFrames: 30 } as const;
 
+/**
+ * Slow background clouds drifting in the parallax layer. Pixel size and sky
+ * band are logical px; `parallaxFactor` is the fraction of ground scroll
+ * clouds drift at (0 = fixed to viewport, 1 = ground speed). Spawn gaps are
+ * in logical px of ground scroll, keyed off `state.scrollX`.
+ */
+export const CLOUDS = {
+  width: 32,
+  height: 10,
+  minY: 20,
+  maxY: 100,
+  parallaxFactor: 0.3,
+  minSpawnGap: 300,
+  maxSpawnGap: 900,
+  initialCount: 3,
+} as const;
+
 /** Top of the ground line, in logical px. */
 export const GROUND_Y = 260;
 
