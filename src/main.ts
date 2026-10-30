@@ -4,6 +4,7 @@
 
 import { createBus } from './events.js';
 import { installClouds } from './features/clouds.js';
+import { installMoon } from './features/moon.js';
 import { installPuddle } from './features/puddle.js';
 import { createGame } from './game.js';
 import { createKeyboard } from './input.js';
@@ -94,6 +95,7 @@ const canvas = findCanvas();
 fitCanvas(canvas);
 const renderer = createRenderer(canvas);
 // Cosmetic features plug in from outside the game loop (architecture 2.2).
+installMoon({ game, renderer });
 installPuddle({ game, renderer });
 installClouds({ game, renderer });
 // Each run gets a fresh keyboard, so a key still held from the crash does not

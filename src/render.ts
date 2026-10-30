@@ -87,10 +87,11 @@ export function drawSprite(
   sprite: Sprite,
   x: number,
   y: number,
+  color: string = PALETTE.fg,
 ): void {
   const originX = Math.round(x);
   const originY = Math.round(y);
-  ctx.fillStyle = PALETTE.fg;
+  ctx.fillStyle = color;
   for (const run of sprite.runs) {
     ctx.fillRect(originX + run.x, originY + run.y, run.width, run.height);
   }
@@ -124,10 +125,16 @@ export function dinoSprite(dino: GameState['dino']): Sprite {
   }
 }
 
-/** Every obstacle at its state position, its sprite chosen from `kind`. */
+/** Every obstacle at its state position, painted in pumpkin orange at night. */
 export const drawObstacles: LayerDraw = (ctx, state) => {
   for (const obstacle of state.obstacles) {
-    drawSprite(ctx, obstacleSprite(obstacle.kind), obstacle.x, obstacle.y);
+    drawSprite(
+      ctx,
+      obstacleSprite(obstacle.kind),
+      obstacle.x,
+      obstacle.y,
+      PALETTE.pumpkin,
+    );
   }
 };
 

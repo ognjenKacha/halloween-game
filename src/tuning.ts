@@ -12,13 +12,17 @@ export const STEP_MS = 1000 / 60;
 export const CANVAS = { width: 800, height: 300 } as const;
 
 /**
- * The look: near-white background, dark grey foreground, and one red accent
- * used only for the game-over puddle (functional spec 2.9).
+ * The look: moonlit night. Deep indigo sky, bone-white strokes for the dino,
+ * ground and HUD, one warm orange reserved for jack-o-lantern pumpkins and
+ * (later slices) candy, and the blood-red accent kept for the game-over puddle
+ * (functional spec 2.9).
  */
 export const PALETTE = {
-  bg: '#f7f7f7',
-  fg: '#535353',
+  bg: '#0a0f1c',
+  fg: '#e8e4d0',
   accent: '#c4302b',
+  pumpkin: '#e59e3a',
+  moon: '#f5e9b1',
 } as const;
 
 /**
@@ -26,6 +30,17 @@ export const PALETTE = {
  * many render frames it takes to spread (30 frames is about 0.5 s at 60 Hz).
  */
 export const PUDDLE = { width: 60, growFrames: 30 } as const;
+
+/**
+ * The waxing moon in the background layer: a filled disc centred at (cx, cy)
+ * with radius `r`, all in logical px. Static — it never scrolls with the
+ * course, so the viewport frames the same moon all run.
+ */
+export const MOON = {
+  cx: 640,
+  cy: 65,
+  r: 22,
+} as const;
 
 /**
  * Slow background clouds drifting in the parallax layer. Pixel size and sky
