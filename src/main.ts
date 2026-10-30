@@ -9,10 +9,11 @@ import { installPuddle } from './features/puddle.js';
 import { createGame } from './game.js';
 import { createKeyboard } from './input.js';
 import { attachKeyboard } from './input-dom.js';
-import { backingSize, createRenderer } from './render.js';
+import { backingSize, createRenderer, HUD_FONT } from './render.js';
 import { parseSeed } from './rng.js';
 import { createMemoryStore, createStorageStore } from './store.js';
-import type { HighScoreStore } from './types.js';
+import { HUD, PALETTE } from './tuning.js';
+import type { HighScoreStore, LayerDraw } from './types.js';
 
 /** The one localStorage key the game owns (architecture section 3). */
 const HI_STORAGE_KEY = 'dino.hi';
@@ -112,11 +113,54 @@ game.on('restart', () => {
   keyboardHandle = bindKeyboard();
 });
 
+// Konami code (↑ ↑ ↓ ↓ ← → ← → B A) toggles a visible SECRET overlay and
+// mirrors to `window.__dino.secret`. Listener runs in parallel with the
+// gameplay keyboard (never calls preventDefault), so ArrowUp still jumps.
+const KONAMI = [
+  'ArrowUp',
+  'ArrowUp',
+  'ArrowDown',
+  'ArrowDown',
+  'ArrowLeft',
+  'ArrowRight',
+  'ArrowLeft',
+  'ArrowRight',
+  'KeyB',
+  'KeyA',
+] as const;
+let secretMode = false;
+let konamiProgress = 0;
+window.addEventListener('keydown', (event) => {
+  if (event.repeat) return;
+  if (event.code === KONAMI[konamiProgress]) {
+    konamiProgress += 1;
+    if (konamiProgress === KONAMI.length) {
+      secretMode = !secretMode;
+      konamiProgress = 0;
+    }
+    return;
+  }
+  konamiProgress = event.code === KONAMI[0] ? 1 : 0;
+});
+
+const drawSecretOverlay: LayerDraw = (ctx) => {
+  if (!secretMode) return;
+  ctx.fillStyle = PALETTE.fg;
+  ctx.font = HUD_FONT;
+  ctx.textAlign = 'left';
+  ctx.textBaseline = 'middle';
+  ctx.fillText('SECRET', 10, HUD.top);
+};
+renderer.addLayer('hud', drawSecretOverlay);
+
 // 5. Read-only hook for end-to-end tests. Frozen so page code cannot replace it.
 window.__dino = Object.freeze({
   state: () => game.state(),
   seed,
-  version: 1,
+  version: 2,
+  get secret() {
+    return secretMode;
+  },
 });
 
 // 6. Animation loop. Re-arm first: if a frame throws, the next one still runs.

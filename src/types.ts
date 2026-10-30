@@ -134,4 +134,5 @@ export interface DinoHook {
   readonly state: () => GameState;
   readonly seed: number | undefined;
   readonly version: number;
+  readonly secret: boolean;
 }
